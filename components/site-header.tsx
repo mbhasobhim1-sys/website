@@ -13,8 +13,10 @@ export function SiteHeader() {
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const [loading, setLoading] = useState(true)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     const supabase = createClient()
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user)
@@ -50,14 +52,14 @@ export function SiteHeader() {
               Forms
             </Button>
           </Link>
-          {user && (
+          {mounted && user && (
             <Link href="/my-submissions">
               <Button variant="ghost" size="sm">
                 My Submissions
               </Button>
             </Link>
           )}
-          {isAdmin && (
+          {mounted && isAdmin && (
             <Link href="/admin">
               <Button variant="ghost" size="sm">
                 <LayoutDashboard className="mr-1.5 h-4 w-4" />
@@ -68,7 +70,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          {loading ? (
+          {!mounted || loading ? (
             <div className="h-9 w-20 animate-pulse rounded-md bg-muted" />
           ) : user ? (
             <div className="flex items-center gap-2">
@@ -106,7 +108,7 @@ export function SiteHeader() {
         </button>
       </div>
 
-      {mobileOpen && (
+      {mounted && mobileOpen && (
         <div className="border-t border-border bg-card px-4 py-4 md:hidden">
           <nav className="flex flex-col gap-2">
             <Link href="/" onClick={() => setMobileOpen(false)}>
